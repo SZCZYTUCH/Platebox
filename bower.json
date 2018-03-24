@@ -1,0 +1,25 @@
+{
+  "name": "PlateBox",
+  "description": "game",
+  "version": "1.0.0",
+  "main": "css/style.css",
+  "authors": [
+    "SzcZ"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt",
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {"lodash":"^4.13.1",
+    "angular": "1.6.1",
+    "angular-deferred-bootstrap": "^0.1.9",
+    "angular-route": "^1.5.8"
+  },
+  "devDependencies": {}
+}
