@@ -1,0 +1,176 @@
+html, body {
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                    not supported by any browser */
+    margin: 0;
+}
+
+#PLATEBOXBODY{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.plate-map{
+    width: 100%;
+    height: 50%;
+    background-color: cornflowerblue;
+}
+
+.plate-grid{
+    width: 100%;
+    height: 50%;
+    left: 0;
+    /*background-color: whitesmoke;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+@media (min-width: 480px){
+    .plate-map, .plate-grid{
+        width: 50%;
+        height: 100%;
+    }
+}
+
+.plate-main{
+    background-color: antiquewhite;
+    display: flex;
+    flex-wrap: wrap;
+    pointer-events: none;
+    margin: 5px;
+}
+
+.plate-box{
+    width: 44px;
+    height: 44px;
+    pointer-events: all;
+    position: absolute;
+}
+
+.plate-box-animate{
+    -webkit-transition: -webkit-transform 800ms;
+    -ms-transition: -ms-transform 800ms;
+    -moz-transition: -moz-transform 800ms;
+    transition: transform 800ms;
+}
+
+.plate-inn{
+    pointer-events: all;
+    width: calc( 100% - 8px);
+    height: calc( 100% - 8px);
+    margin: 4px;
+    position: absolute;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plate-inn > div{
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-position: center;
+    position: absolute;
+}
+
+.plate-inn > div:nth-child(1){
+    font-size: 7px;
+    align-items: flex-start !important;
+}
+
+.plate-inn > div:nth-child(2){
+    font-size: 7px;
+    align-items: flex-start !important;
+}
+
+.plate-inn > div:nth-child(3){
+    font-size: 9px;
+    align-items: flex-end !important;
+}
+
+.plate-border{
+    border: 1px solid black;
+}
+
+.plate-info{
+    height:21px;
+}
+
+.plate-reroll{
+    background-color: rosybrown;
+}
+
+.plate-box-after-c   { background-image: url(../assets/images/mark_ico/c/c.png);    }
+.plate-box-after-c-e { background-image: url(../assets/images/mark_ico/c/c-e.png);  }
+.plate-box-after-c-n { background-image: url(../assets/images/mark_ico/c/c-n.png);  }
+.plate-box-after-c-ne{ background-image: url(../assets/images/mark_ico/c/c-ne.png); }
+.plate-box-after-c-nw{ background-image: url(../assets/images/mark_ico/c/c-nw.png); }
+.plate-box-after-c-s { background-image: url(../assets/images/mark_ico/c/c-s.png);  }
+.plate-box-after-c-se{ background-image: url(../assets/images/mark_ico/c/c-se.png); }
+.plate-box-after-c-sw{ background-image: url(../assets/images/mark_ico/c/c-sw.png); }
+.plate-box-after-c-w { background-image: url(../assets/images/mark_ico/c/c-w.png);  }
+
+.plate-box-after-e-x { background-image: url(../assets/images/mark_ico/x/e-x.png);  }
+.plate-box-after-n-x { background-image: url(../assets/images/mark_ico/x/n-x.png);  }
+.plate-box-after-ne-x{ background-image: url(../assets/images/mark_ico/x/ne-x.png); }
+.plate-box-after-nw-x{ background-image: url(../assets/images/mark_ico/x/nw-x.png); }
+.plate-box-after-s-x { background-image: url(../assets/images/mark_ico/x/s-x.png);  }
+.plate-box-after-se-x{ background-image: url(../assets/images/mark_ico/x/se-x.png); }
+.plate-box-after-sw-x{ background-image: url(../assets/images/mark_ico/x/sw-x.png); }
+.plate-box-after-w-x { background-image: url(../assets/images/mark_ico/x/w-x.png);  }
+
+.plate-box-after-nw-e  { background-image: url(../assets/images/mark_ico/i/nw/nw-e.png);   }
+.plate-box-after-nw-n  { background-image: url(../assets/images/mark_ico/i/nw/nw-n.png);   }
+.plate-box-after-nw-ne { background-image: url(../assets/images/mark_ico/i/nw/nw-ne.png);  }
+.plate-box-after-nw-s  { background-image: url(../assets/images/mark_ico/i/nw/nw-s.png);   }
+.plate-box-after-nw-se { background-image: url(../assets/images/mark_ico/i/nw/nw-se.png);  }
+.plate-box-after-nw-sw { background-image: url(../assets/images/mark_ico/i/nw/nw-sw.png);  }
+.plate-box-after-nw-w  { background-image: url(../assets/images/mark_ico/i/nw/nw-w.png);   }
+
+.plate-box-after-n-e   { background-image: url(../assets/images/mark_ico/i/n/n-e.png);   }
+.plate-box-after-n-ne  { background-image: url(../assets/images/mark_ico/i/n/n-ne.png);  }
+.plate-box-after-n-s   { background-image: url(../assets/images/mark_ico/i/n/n-s.png);   }
+.plate-box-after-n-se  { background-image: url(../assets/images/mark_ico/i/n/n-se.png);  }
+.plate-box-after-n-sw  { background-image: url(../assets/images/mark_ico/i/n/n-sw.png);  }
+.plate-box-after-n-w   { background-image: url(../assets/images/mark_ico/i/n/n-w.png);   }
+
+.plate-box-after-ne-e   { background-image: url(../assets/images/mark_ico/i/ne/ne-e.png);   }
+.plate-box-after-ne-s   { background-image: url(../assets/images/mark_ico/i/ne/ne-s.png);   }
+.plate-box-after-ne-se  { background-image: url(../assets/images/mark_ico/i/ne/ne-se.png);  }
+.plate-box-after-ne-sw  { background-image: url(../assets/images/mark_ico/i/ne/ne-sw.png);  }
+.plate-box-after-ne-w   { background-image: url(../assets/images/mark_ico/i/ne/ne-w.png);   }
+
+.plate-box-after-e-s   { background-image: url(../assets/images/mark_ico/i/e/e-s.png);   }
+.plate-box-after-e-se  { background-image: url(../assets/images/mark_ico/i/e/e-se.png);  }
+.plate-box-after-e-sw  { background-image: url(../assets/images/mark_ico/i/e/e-sw.png);  }
+.plate-box-after-e-w   { background-image: url(../assets/images/mark_ico/i/e/e-w.png);   }
+
+.plate-box-after-se-s   { background-image: url(../assets/images/mark_ico/i/se/se-s.png);   }
+.plate-box-after-se-sw  { background-image: url(../assets/images/mark_ico/i/se/se-sw.png);  }
+.plate-box-after-se-w   { background-image: url(../assets/images/mark_ico/i/se/se-w.png);   }
+
+.plate-box-after-s-sw  { background-image: url(../assets/images/mark_ico/i/s/s-sw.png);  }
+.plate-box-after-s-w   { background-image: url(../assets/images/mark_ico/i/s/s-w.png);   }
+
+.plate-box-after-sw-w   { background-image: url(../assets/images/mark_ico/i/sw/sw-w.png);   }
+
+.plate-box-blue {
+        transform: translateY(40px);
+}
+
+.flex-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

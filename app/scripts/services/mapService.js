@@ -22,13 +22,13 @@
                 for (var i = 0; i <= specs.w; i++) {
                     for (var j = 0; j <= specs.h; j++) {
                         //var invar = _.sample(self.sampleArray);
-                        self.grid['G' + i +'_'+ j] = {x: i, y: j, filled: false, background: 'white'};
+                        self.grid['G' + i +'_'+ j] = {x: i, y: j, filled: false, background: 'black'};
                         k++;
                     }
                 }
             };
             
-            self.tries = 1000;
+            self.tries = 220;
             self.roomExtraSize = 1;
             
             self.generateRooms = function (specs) {
@@ -74,12 +74,6 @@
                 }
             };
             
-//            self.distanceTo = function (curent_room, other) {
-//                var dx = curent_room.x - other.x;
-//                var dy = curent_room.y - other.y;
-//                return Math.sqrt(dx * dx + dy * dy);
-//            };
-            
             self.isOverlaping = function (curent_room, other_room) {
                 return !(
                         curent_room.x >= (other_room.x + other_room.width) || 
@@ -89,24 +83,106 @@
                 );
             };
             
-            
-            
             self.carveRoomSpace = function(){
                 _.forEach(self.rooms, function (room, key) {
                     var color = _.sample(['blue', 'green', 'yellow', 'teal']);
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
                             //console.log('seting up '+'G'+(room.x+j)+'_'+(room.x+k));
-                            self.grid['G'+(room.x+j)+'_'+(room.y+k)].background = color;
+                            self.carve( {x:(room.x+j), y:(room.y+k)});
                         }
                     }    
                 });  
+            };
+            
+            self.generateCorridors = function (specs) {
+                for (var y = 1; y < specs.h; y += 2) {
+                    for (var x = 1; x < specs.w; x += 2) {
+                        //console.log(self.grid['G'+(x)+'_'+(y)].filled);
+                        //if not filled generate corridor
+                        if (!self.grid['G'+(x)+'_'+(y)].filled){
+                            //self.generateCorridor({x:x,y:y});
+                        };
+                    }
+                }
+            };
+            
+            self.carve = function(coord){
+                self.grid['G'+(coord.x)+'_'+(coord.y)].background = 'white';
+                self.grid['G'+(coord.x)+'_'+(coord.y)].filled = true;
+            };
+            
+            self.canThisCellBeNextCandidate = function(cell){
+                //candidate cell can not be room wall, border, can be another corridor tho
+                
+                
+                
+                
+                
+                
+                
+                
+                //todo
+            };
+            
+            //todo
+            self.generateCorridor = function (startingPoint) {
+                
+                var Directions = [{x:-1}, {x:1}, {y:-1}, {y:1}];
+                var corridor = [];
+                var lastDir;
+
+                //_startRegion();
+                self.carve(startingPoint);
+
+                corridor.push(startingPoint);
+                
+                while (corridor.length > 0) {
+                    var currentlyProbedCell = _.last(corridor);
+
+                    // See which adjacent cells are open and possible candidate.
+                    var extensionCandidatesCells = []; //<Direction>
+                    
+                    _.forEach(Directions, function (dir, key) {
+                        var cellDirection = 0;
+                        if (self.canThisCellBeNextCandidate(currentlyProbedCell, dir)){
+                            extensionCandidatesCells.add(dir);
+                        } 
+                    });
+
+
+                    if (extensionCandidatesCells.length > 0) {
+                        // Based on how "windy" passages are, try to prefer carving in the
+                        // same direction.
+                        var dir;
+                        if (extensionCandidatesCells.contains(lastDir) && rng.range(100) > windingPercent) {
+                            dir = lastDir;
+                        } else {
+                            dir = rng.item(extensionCandidatesCells);
+                        }
+
+                        _carve(currentlyProbedCell + dir);
+                        _carve(currentlyProbedCell + dir * 2);
+
+                        corridor.add(currentlyProbedCell + dir * 2);
+                        lastDir = dir;
+                    } else {
+                        // No adjacent cells open.
+                        corridor.removeLast();
+
+                        // This path has ended.
+                        lastDir = null;
+                    }
+                }
+
             };
             
             self.getMap = function (specs) {
                 self.fillGrid(specs);
                 self.generateRooms(specs);
                 self.carveRoomSpace();
+                
+                self.generateCorridors(specs);
                 
                 //self.grid['G50_27'].background = 'blue';
                 

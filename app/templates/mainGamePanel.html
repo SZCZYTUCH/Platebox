@@ -1,0 +1,22 @@
+<div style="width: 100%; height: 100%; display: flex; flex-wrap: wrap; background-color: whitesmoke;">
+    
+    <div class="plate-map" ng-controller="mapController" >
+        <div style="">
+            <div class="map-box" ng-style="plateStyle(square)" ng-repeat="square in map.grid" ></div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="plate-grid" ng-controller="gridController" >
+        <div class="plate-main" ng-style="mainPlateStyle()">
+            <div class="plate-box" ng-style="plateStyle(box)" ng-repeat="box in grid" box-handle>
+                <div class="plate-inn">
+                    <div ng-style="plateBackground(box)"></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
