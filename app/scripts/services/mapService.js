@@ -30,6 +30,7 @@
             
             self.tries = 220;
             self.roomExtraSize = 1;
+            self.windingPercent = 0;
             
             self.generateRooms = function (specs) {
                 for (var i = 0; i < self.tries; i++) {
@@ -89,7 +90,7 @@
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
                             //console.log('seting up '+'G'+(room.x+j)+'_'+(room.x+k));
-                            self.carve( {x:(room.x+j), y:(room.y+k)});
+                            self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7');
                         }
                     }    
                 });  
@@ -101,22 +102,45 @@
                         //console.log(self.grid['G'+(x)+'_'+(y)].filled);
                         //if not filled generate corridor
                         if (!self.grid['G'+(x)+'_'+(y)].filled){
-                            //self.generateCorridor({x:x,y:y});
+                            self.generateCorridor({x:x,y:y}, specs);
                         };
                     }
                 }
             };
             
-            self.carve = function(coord){
-                self.grid['G'+(coord.x)+'_'+(coord.y)].background = 'white';
+            self.carve = function(coord, color){
+                self.grid['G'+(coord.x)+'_'+(coord.y)].background = color;
                 self.grid['G'+(coord.x)+'_'+(coord.y)].filled = true;
             };
             
-            self.canThisCellBeNextCandidate = function(cell){
+            self.canThisCellBeNextCandidate = function(cell, direction, specs){
                 //candidate cell can not be room wall, border, can be another corridor tho
                 
+                var cellCopy = angular.copy(cell);
                 
+                var key = Object.keys(direction)[0];
                 
+                cellCopy[key] = cellCopy[key] + direction[key];
+                
+                //console.log(cellCopy, direction);
+                
+                //console.log(specs);
+                
+                //todo optimalize
+                
+                //if out of bounds can not be candidate
+                if (cellCopy.x < 0 || cellCopy.y < 0 || cellCopy.x > specs.w || cellCopy.y > specs.h){
+                    //console.log(cellCopy.x < 0 , cellCopy.y < 0 , cellCopy.x > specs.w , cellCopy.y > specs.h);
+                    return false;
+                }
+                // if filled - can not be candidate
+                else if (self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].filled){
+                    //console.log('G'+(cellCopy.x)+'_'+(cellCopy.y)+' is '+ self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].filled);
+                    return false;
+                }
+                else {
+                    return true;
+                }
                 
                 
                 
@@ -126,14 +150,14 @@
             };
             
             //todo
-            self.generateCorridor = function (startingPoint) {
-                
-                var Directions = [{x:-1}, {x:1}, {y:-1}, {y:1}];
+            self.generateCorridor = function (startingPoint, specs) {
+                //console.log(startingPoint);
+                var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
                 var corridor = [];
                 var lastDir;
 
                 //_startRegion();
-                self.carve(startingPoint);
+                self.carve(startingPoint, '#c0de99');
 
                 corridor.push(startingPoint);
                 
@@ -145,30 +169,43 @@
                     
                     _.forEach(Directions, function (dir, key) {
                         var cellDirection = 0;
-                        if (self.canThisCellBeNextCandidate(currentlyProbedCell, dir)){
-                            extensionCandidatesCells.add(dir);
+                        if (self.canThisCellBeNextCandidate(currentlyProbedCell, dir, specs)){
+                            extensionCandidatesCells.push(dir);
                         } 
                     });
-
-
+                    
+                    //console.log(extensionCandidatesCells);
+                    
                     if (extensionCandidatesCells.length > 0) {
                         // Based on how "windy" passages are, try to prefer carving in the
                         // same direction.
                         var dir;
-                        if (extensionCandidatesCells.contains(lastDir) && rng.range(100) > windingPercent) {
+                        
+                        
+                        
+                        if (_.includes(extensionCandidatesCells, lastDir) && _.random(100) > self.windingPercent) {
                             dir = lastDir;
                         } else {
-                            dir = rng.item(extensionCandidatesCells);
+                            dir = _.sample(extensionCandidatesCells);
                         }
+                        
+                        //carve won candidate
+                        var key0 = Object.keys(dir)[0];
+                        var startingPointCopy0 = angular.copy(currentlyProbedCell);
+                        startingPointCopy0[key0] = startingPointCopy0[key0] + dir[key0];
+                        self.carve(startingPointCopy0, '#c0de99');
+                        //
+                        //carve connector between startingPoint and candidate
+                        var startingPointCopy1 = angular.copy(currentlyProbedCell);
+                        startingPointCopy1[key0] = startingPointCopy1[key0] + (dir[key0]/2);
+                        self.carve(startingPointCopy1, '#c0de99');
 
-                        _carve(currentlyProbedCell + dir);
-                        _carve(currentlyProbedCell + dir * 2);
-
-                        corridor.add(currentlyProbedCell + dir * 2);
+                        //add candidate to corridor
+                        corridor.push(startingPointCopy0);
                         lastDir = dir;
                     } else {
                         // No adjacent cells open.
-                        corridor.removeLast();
+                        corridor.pop();
 
                         // This path has ended.
                         lastDir = null;
