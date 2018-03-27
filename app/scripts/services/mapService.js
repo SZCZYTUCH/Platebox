@@ -22,15 +22,15 @@
                 for (var i = 0; i <= specs.w; i++) {
                     for (var j = 0; j <= specs.h; j++) {
                         //var invar = _.sample(self.sampleArray);
-                        self.grid['G' + i +'_'+ j] = {x: i, y: j, filled: false, background: 'black'};
+                        self.grid['G' + i +'_'+ j] = {x: i, y: j, filled: false, background: 'black', type: null};
                         k++;
                     }
                 }
             };
             
-            self.tries = 220;
+            self.tries = 2500;
             self.roomExtraSize = 1;
-            self.windingPercent = 0;
+            self.windingPercent = 100;
             
             self.generateRooms = function (specs) {
                 for (var i = 0; i < self.tries; i++) {
@@ -90,7 +90,7 @@
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
                             //console.log('seting up '+'G'+(room.x+j)+'_'+(room.x+k));
-                            self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7');
+                            self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7', 'room');
                         }
                     }    
                 });  
@@ -108,9 +108,10 @@
                 }
             };
             
-            self.carve = function(coord, color){
+            self.carve = function(coord, color, type){
                 self.grid['G'+(coord.x)+'_'+(coord.y)].background = color;
                 self.grid['G'+(coord.x)+'_'+(coord.y)].filled = true;
+                self.grid['G'+(coord.x)+'_'+(coord.y)].type = type;
             };
             
             self.canThisCellBeNextCandidate = function(cell, direction, specs){
@@ -157,7 +158,7 @@
                 var lastDir;
 
                 //_startRegion();
-                self.carve(startingPoint, '#c0de99');
+                self.carve(startingPoint, '#c0de99', 'corridor');
 
                 corridor.push(startingPoint);
                 
@@ -193,12 +194,12 @@
                         var key0 = Object.keys(dir)[0];
                         var startingPointCopy0 = angular.copy(currentlyProbedCell);
                         startingPointCopy0[key0] = startingPointCopy0[key0] + dir[key0];
-                        self.carve(startingPointCopy0, '#c0de99');
+                        self.carve(startingPointCopy0, '#c0de99', 'corridor');
                         //
                         //carve connector between startingPoint and candidate
                         var startingPointCopy1 = angular.copy(currentlyProbedCell);
                         startingPointCopy1[key0] = startingPointCopy1[key0] + (dir[key0]/2);
-                        self.carve(startingPointCopy1, '#c0de99');
+                        self.carve(startingPointCopy1, '#c0de99', 'corridor');
 
                         //add candidate to corridor
                         corridor.push(startingPointCopy0);
