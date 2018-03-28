@@ -23,6 +23,7 @@
             
             self.grid = {};
             self.rooms = [];
+            self.connectorRegions = [];
             
             self.fillGrid = function (specs) {
                 var k = 0;
@@ -54,7 +55,7 @@
                     var x = _.random( _.toInteger((specs.w - width) / 2) ) * 2 + 1;
                     var y = _.random( _.toInteger((specs.h - height) / 2) ) * 2 + 1;
 
-                    var curent_room = {x:x, y:y, width:width, height:height};
+                    var curent_room = {x:x, y:y, width:width, height:height, doors:[]};
 
                     var not_overlaping = true;
                     
@@ -95,7 +96,7 @@
                     //var color = _.sample(['blue', 'green', 'yellow', 'teal']);
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
-                            //console.log('seting up '+'G'+(room.x+j)+'_'+(room.x+k));
+                            //console.log('seting up '+'G'+(room.x+j)+'_'+(room.y+k));
                             self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7', ('room_'+key) );
                         }
                     }    
@@ -203,30 +204,18 @@
             };
             
             self.canThisNullCellBeNextCandidateForDoorConnector = function(nullCell){
-                if  
+                return (
                 (   ( (self.grid['G'+(nullCell.x+1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) &&
                     ( (self.grid['G'+(nullCell.x-1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) ) 
-                {
-                    return true;
-                } 
-                else if
+                ||
                 (   ( (self.grid['G'+(nullCell.x)+'_'+(nullCell.y+1)].type+'').substring(0, 4) === 'room' ) &&
-                    ( (self.grid['G'+(nullCell.x)+'_'+(nullCell.y-1)].type+'').substring(0, 4) === 'room' ) ) 
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    ( (self.grid['G'+(nullCell.x)+'_'+(nullCell.y-1)].type+'').substring(0, 4) === 'room' ) )
+                );
             };
             
             self.createDoorConnections = function (specs) {
-                
                 var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
-                var connectorRegions = [];
-                
-               
+
                 for (var y = 1; y < specs.h; y++) {
                     for (var x = 1; x < specs.w; x++) {
                         //Find all of the corridor tiles that can connect two (or more) rooms.
@@ -237,7 +226,7 @@
                                     var key = Object.keys(dir)[0];
                                     var candidate = {x:x, y:y};
                                     candidate[key] = candidate[key] + (dir[key] / 2);
-                                    connectorRegions.push({cell:candidate, connectorType: 'c-r'}); 
+                                    self.connectorRegions.push({cell:candidate, connectorType: 'c-r'}); 
                                 } 
                             });
                         };
@@ -245,16 +234,27 @@
                         //if cell is a null type check for possible door connection between rooms
                         if (self.grid['G'+(x)+'_'+(y)].type === null){
                             if (self.canThisNullCellBeNextCandidateForDoorConnector({x:x, y:y})){
-                                connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r'}); 
+                                self.connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r'}); 
                             }
                         }
                     }
                 };
                 
+                //link connector regions to rooms
+                _.forEach(self.rooms, function (room, k) {
+                    console.log(room);
+                    for (var j = -1; j < room.width+1; j++) {
+                        for (var k = -1; k < room.height+1; k++) {                            
+                            var door = _.find(self.connectorRegions, function(connector) { return (connector.cell.x === (room.x+j) && connector.cell.y === (room.y+k)); });
+                            if (door !== undefined){  room.doors.push(door);  }
+                        }
+                    }
+                });
                 
                 
                 
-                _.forEach(connectorRegions, function (connector, k) {
+                
+                _.forEach(self.connectorRegions, function (connector, k) {
                     //console.log(connector);
                     var cellCopy = connector.cell;
                     if (connector.connectorType === 'c-r'){  
@@ -267,7 +267,7 @@
                     
                 });
                 
-                console.log(connectorRegions);
+                console.log(self.rooms);
                 
 //                for (var pos in bounds.inflate(-1)) {
 //                    // Can't already be part of a region.
