@@ -11,6 +11,13 @@
 //                size: 40
 //
 //            };
+//"console.log();"
+//
+//
+//caret-backward
+//
+//
+//caret-backward
 
             
             
@@ -21,7 +28,6 @@
                 var k = 0;
                 for (var i = 0; i <= specs.w; i++) {
                     for (var j = 0; j <= specs.h; j++) {
-                        //var invar = _.sample(self.sampleArray);
                         self.grid['G' + i +'_'+ j] = {x: i, y: j, filled: false, background: 'black', type: null};
                         k++;
                     }
@@ -86,11 +92,11 @@
             
             self.carveRoomSpace = function(){
                 _.forEach(self.rooms, function (room, key) {
-                    var color = _.sample(['blue', 'green', 'yellow', 'teal']);
+                    //var color = _.sample(['blue', 'green', 'yellow', 'teal']);
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
                             //console.log('seting up '+'G'+(room.x+j)+'_'+(room.x+k));
-                            self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7', 'room');
+                            self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7', ('room_'+key) );
                         }
                     }    
                 });  
@@ -114,7 +120,7 @@
                 self.grid['G'+(coord.x)+'_'+(coord.y)].type = type;
             };
             
-            self.canThisCellBeNextCandidate = function(cell, direction, specs){
+            self.canThisCellBeNextCandidateForCorridor = function(cell, direction, specs){
                 //candidate cell can not be room wall, border, can be another corridor tho 
                 var cellCopy = angular.copy(cell);
                 var key = Object.keys(direction)[0];
@@ -126,7 +132,6 @@
                         (!(self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].filled));
 
             };
-            
 
             self.generateCorridor = function (startingPoint, specs) {
                 //console.log(startingPoint);
@@ -146,8 +151,7 @@
                     var extensionCandidatesCells = []; //<Direction>
                     
                     _.forEach(Directions, function (dir, key) {
-                        var cellDirection = 0;
-                        if (self.canThisCellBeNextCandidate(currentlyProbedCell, dir, specs)){
+                        if (self.canThisCellBeNextCandidateForCorridor(currentlyProbedCell, dir, specs)){
                             extensionCandidatesCells.push(dir);
                         } 
                     });
@@ -189,14 +193,25 @@
                         lastDir = null;
                     }
                 }
-
+            };
+            
+            self.canThisCellBeNextCandidateForDoorConnector = function(cell, direction, specs){
+                var cellCopy = angular.copy(cell);
+                var key = Object.keys(direction)[0];
+                cellCopy[key] = cellCopy[key] + direction[key];
+                
+                //if out of bounds can not be candidate
+                return  (!(cellCopy.x < 0 || cellCopy.y < 0 || cellCopy.x > specs.w || cellCopy.y > specs.h)) && 
+                //if not room - can not be candidate
+                        (!self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type.substring(0, 4) === 'room');
             };
             
             self.createDoorConnections = function () {
-
-
-                // Find all of the tiles that can connect two (or more) regions.
-                //var connectorRegions = <Vec, Set<int>>{};
+                // Find all of the corridor tiles that can connect two (or more) rooms.
+                var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
+                var connectorRegions = [];
+                
+                
                 for (var pos in bounds.inflate(-1)) {
                     // Can't already be part of a region.
                     if (getTile(pos) != Tiles.wall)
