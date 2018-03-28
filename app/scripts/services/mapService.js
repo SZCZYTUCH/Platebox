@@ -203,6 +203,10 @@
                         ((self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type+'').substring(0, 4) === 'room');
             };
             
+            self.carveDoor = function(door){
+                
+            };
+            
             self.canThisNullCellBeNextCandidateForDoorConnector = function(nullCell){
                 return (
                 (   ( (self.grid['G'+(nullCell.x+1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) &&
@@ -226,7 +230,7 @@
                                     var key = Object.keys(dir)[0];
                                     var candidate = {x:x, y:y};
                                     candidate[key] = candidate[key] + (dir[key] / 2);
-                                    self.connectorRegions.push({cell:candidate, connectorType: 'c-r'}); 
+                                    self.connectorRegions.push({cell:candidate, connectorType: 'c-r', closed: true}); 
                                 } 
                             });
                         };
@@ -234,7 +238,7 @@
                         //if cell is a null type check for possible door connection between rooms
                         if (self.grid['G'+(x)+'_'+(y)].type === null){
                             if (self.canThisNullCellBeNextCandidateForDoorConnector({x:x, y:y})){
-                                self.connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r'}); 
+                                self.connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r', closed: true}); 
                             }
                         }
                     }
@@ -242,13 +246,38 @@
                 
                 //link connector regions to rooms
                 _.forEach(self.rooms, function (room, k) {
-                    console.log(room);
                     for (var j = -1; j < room.width+1; j++) {
                         for (var k = -1; k < room.height+1; k++) {                            
                             var door = _.find(self.connectorRegions, function(connector) { return (connector.cell.x === (room.x+j) && connector.cell.y === (room.y+k)); });
                             if (door !== undefined){  room.doors.push(door);  }
                         }
                     }
+                });
+                
+                //randomly select doors to carve, remove the rest
+                _.forEach(self.rooms, function (room, k) {
+                    var roomSize  = (room.width*room.height);
+                    var maxDoors = Math.floor(Math.pow(roomSize*0.79370005232323, 0.44727752133702440338));
+                    var randNumDoors = _.random(maxDoors);
+                    var finalDoorsArray = [];
+                    
+                    
+                    //finalDoorsArray.push(_.sample(room.doors));
+                    //finalDoorsArray[0].closed = false;
+                    
+                    console.log('Room size: '+roomSize);
+                    console.log('Maximum doors for the room: '+maxDoors);
+
+//                    while (finalDoorsArray.length < randNumDoors){
+//                        var drawDoor = null;
+//                        //TODO optymalize
+//                        while (drawDoor === null || drawDoor.closed){
+//                            drawDoor = _.sample(room.doors);
+//                        }
+//                        
+//                        
+//                        
+//                    }    
                 });
                 
                 
