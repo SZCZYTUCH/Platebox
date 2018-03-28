@@ -191,7 +191,7 @@
                 }
             };
             
-            self.canThisCellBeNextCandidateForDoorConnector = function(cell, direction, specs){
+            self.canThisCorridorCellBeNextCandidateForDoorConnector = function(cell, direction, specs){
                 var cellCopy = angular.copy(cell);
                 var key = Object.keys(direction)[0];
                 cellCopy[key] = cellCopy[key] + direction[key];
@@ -202,37 +202,67 @@
                         ((self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type+'').substring(0, 4) === 'room');
             };
             
+            self.canThisNullCellBeNextCandidateForDoorConnector = function(nullCell){
+                if  
+                (   ( (self.grid['G'+(nullCell.x+1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) &&
+                    ( (self.grid['G'+(nullCell.x-1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) ) 
+                {
+                    return true;
+                } 
+                else if
+                (   ( (self.grid['G'+(nullCell.x)+'_'+(nullCell.y+1)].type+'').substring(0, 4) === 'room' ) &&
+                    ( (self.grid['G'+(nullCell.x)+'_'+(nullCell.y-1)].type+'').substring(0, 4) === 'room' ) ) 
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            };
+            
             self.createDoorConnections = function (specs) {
-                // Find all of the corridor tiles that can connect two (or more) rooms.
+                
                 var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
                 var connectorRegions = [];
                 
+               
                 for (var y = 1; y < specs.h; y++) {
                     for (var x = 1; x < specs.w; x++) {
-                        //console.log(self.grid['G'+(x)+'_'+(y)].filled);
+                        //Find all of the corridor tiles that can connect two (or more) rooms.
                         //if cell is a corridor type check for possible door connection
                         if (self.grid['G'+(x)+'_'+(y)].type === 'corridor'){
-                            
                             _.forEach(Directions, function (dir, key) {
-                                if (self.canThisCellBeNextCandidateForDoorConnector({x:x, y:y}, dir, specs)){
-                                    connectorRegions.push({cell:{x:x, y:y}, dir: dir}); 
+                                if (self.canThisCorridorCellBeNextCandidateForDoorConnector({x:x, y:y}, dir, specs)){
+                                    var key = Object.keys(dir)[0];
+                                    var candidate = {x:x, y:y};
+                                    candidate[key] = candidate[key] + (dir[key] / 2);
+                                    connectorRegions.push({cell:candidate, connectorType: 'c-r'}); 
                                 } 
-
                             });
-
                         };
+                        // Find all the tiles that can connect two rooms together.
+                        //if cell is a null type check for possible door connection between rooms
+                        if (self.grid['G'+(x)+'_'+(y)].type === null){
+                            if (self.canThisNullCellBeNextCandidateForDoorConnector({x:x, y:y})){
+                                connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r'}); 
+                            }
+                        }
                     }
-                }
+                };
+                
+                
+                
                 
                 _.forEach(connectorRegions, function (connector, k) {
                     //console.log(connector);
-                    
                     var cellCopy = connector.cell;
-                    var dir = connector.dir;
-                    var key = Object.keys(dir)[0];
-                    cellCopy[key] = cellCopy[key] + (dir[key] / 2);
-
-                    self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'orange';
+                    if (connector.connectorType === 'c-r'){  
+                        self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'orange';
+                    } else if(connector.connectorType === 'r-r'){
+                        self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'pink';
+                    }
+                    
                     
                     
                 });
