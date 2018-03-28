@@ -139,7 +139,6 @@
                 var corridor = [];
                 var lastDir;
 
-                //_startRegion();
                 self.carve(startingPoint, '#c0de99', 'corridor');
 
                 corridor.push(startingPoint);
@@ -148,7 +147,7 @@
                     var currentlyProbedCell = _.last(corridor);
 
                     // See which adjacent cells are open and possible candidate.
-                    var extensionCandidatesCells = []; //<Direction>
+                    var extensionCandidatesCells = [];
                     
                     _.forEach(Directions, function (dir, key) {
                         if (self.canThisCellBeNextCandidateForCorridor(currentlyProbedCell, dir, specs)){
@@ -159,11 +158,8 @@
                     //console.log(extensionCandidatesCells);
                     
                     if (extensionCandidatesCells.length > 0) {
-                        // Based on how "windy" passages are, try to prefer carving in the
-                        // same direction.
+                        // Based on how "windy" passages are, try to prefer carving in the same direction.
                         var dir;
-                        
-                        
                         
                         if (_.includes(extensionCandidatesCells, lastDir) && _.random(100) > self.windingPercent) {
                             dir = lastDir;
@@ -203,89 +199,120 @@
                 //if out of bounds can not be candidate
                 return  (!(cellCopy.x < 0 || cellCopy.y < 0 || cellCopy.x > specs.w || cellCopy.y > specs.h)) && 
                 //if not room - can not be candidate
-                        (!self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type.substring(0, 4) === 'room');
+                        ((self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type+'').substring(0, 4) === 'room');
             };
             
-            self.createDoorConnections = function () {
+            self.createDoorConnections = function (specs) {
                 // Find all of the corridor tiles that can connect two (or more) rooms.
                 var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
                 var connectorRegions = [];
                 
+                for (var y = 1; y < specs.h; y++) {
+                    for (var x = 1; x < specs.w; x++) {
+                        //console.log(self.grid['G'+(x)+'_'+(y)].filled);
+                        //if cell is a corridor type check for possible door connection
+                        if (self.grid['G'+(x)+'_'+(y)].type === 'corridor'){
+                            
+                            _.forEach(Directions, function (dir, key) {
+                                if (self.canThisCellBeNextCandidateForDoorConnector({x:x, y:y}, dir, specs)){
+                                    connectorRegions.push({cell:{x:x, y:y}, dir: dir}); 
+                                } 
+
+                            });
+
+                        };
+                    }
+                }
                 
-                for (var pos in bounds.inflate(-1)) {
-                    // Can't already be part of a region.
-                    if (getTile(pos) != Tiles.wall)
-                        continue;
+                _.forEach(connectorRegions, function (connector, k) {
+                    //console.log(connector);
+                    
+                    var cellCopy = connector.cell;
+                    var dir = connector.dir;
+                    var key = Object.keys(dir)[0];
+                    cellCopy[key] = cellCopy[key] + (dir[key] / 2);
 
-                    //var regions = new Set<int>();
-                    for (var dir in Direction.CARDINAL) {
-                        var region = _regions[pos + dir];
-                        if (region != null)
-                            regions.add(region);
-                    }
-
-                    if (regions.length < 2)
-                        continue;
-
-                    connectorRegions[pos] = regions;
-                }
-
-                var connectors = connectorRegions.keys.toList();
-
-                // Keep track of which regions have been merged. This maps an original
-                // region index to the one it has been merged to.
-                var merged = {};
-                //var openRegions = new Set<int>();
-                for (var i = 0; i <= _currentRegion; i++) {
-                    merged[i] = i;
-                    openRegions.add(i);
-                }
-
-                // Keep connecting regions until we're down to one.
-                while (openRegions.length > 1) {
-                    var connector = rng.item(connectors);
-
-                    // Carve the connection.
-                    _addJunction(connector);
-
-                    // Merge the connected regions. We'll pick one region (arbitrarily) and
-                    // map all of the other regions to its index.
-                    var regions = connectorRegions[connector]
-                            .map((region) => merged[region]);
-                    var dest = regions.first;
-                    var sources = regions.skip(1).toList();
-
-                    // Merge all of the affected regions. We have to look at *all* of the
-                    // regions because other regions may have previously been merged with
-                    // some of the ones we're merging now.
-                    for (var i = 0; i <= _currentRegion; i++) {
-                        if (sources.contains(merged[i])) {
-                            merged[i] = dest;
-                        }
-                    }
-
-                    // The sources are no longer in use.
-                    openRegions.removeAll(sources);
-
-                    // Remove any connectors that aren't needed anymore.
-                    connectors.removeWhere((pos), {
-                        // Don't allow connectors right next to each other.
-                        //if (connector - pos < 2) return true;
-
-                        // If the connector no long spans different regions, we don't need it.
-                        //var regions = connectorRegions[pos].map((region) => merged[region])
-                        //    .toSet();
-
-                        //if (regions.length > 1) return false;
-
-                        // This connecter isn't needed, but connect it occasionally so that the
-                        // dungeon isn't singly-connected.
-                        //if (rng.oneIn(extraConnectorChance)) _addJunction(pos);
-
-                        //return true;
-                    });
-                }
-            }
+                    self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'orange';
+                    
+                    
+                });
+                
+                console.log(connectorRegions);
+                
+//                for (var pos in bounds.inflate(-1)) {
+//                    // Can't already be part of a region.
+//                    if (getTile(pos) != Tiles.wall)
+//                        continue;
+//
+//                    //var regions = new Set<int>();
+//                    for (var dir in Direction.CARDINAL) {
+//                        var region = _regions[pos + dir];
+//                        if (region != null)
+//                            regions.add(region);
+//                    }
+//
+//                    if (regions.length < 2)
+//                        continue;
+//
+//                    connectorRegions[pos] = regions;
+//                }
+//
+//                var connectors = connectorRegions.keys.toList();
+//
+//                // Keep track of which regions have been merged. This maps an original
+//                // region index to the one it has been merged to.
+//                var merged = {};
+//                //var openRegions = new Set<int>();
+//                for (var i = 0; i <= _currentRegion; i++) {
+//                    merged[i] = i;
+//                    openRegions.add(i);
+//                }
+//
+//                // Keep connecting regions until we're down to one.
+//                while (openRegions.length > 1) {
+//                    var connector = rng.item(connectors);
+//
+//                    // Carve the connection.
+//                    _addJunction(connector);
+//
+//                    // Merge the connected regions. We'll pick one region (arbitrarily) and
+//                    // map all of the other regions to its index.
+//                    var regions = connectorRegions[connector]
+//                            .map((region) => merged[region]);
+//                    var dest = regions.first;
+//                    var sources = regions.skip(1).toList();
+//
+//                    // Merge all of the affected regions. We have to look at *all* of the
+//                    // regions because other regions may have previously been merged with
+//                    // some of the ones we're merging now.
+//                    for (var i = 0; i <= _currentRegion; i++) {
+//                        if (sources.contains(merged[i])) {
+//                            merged[i] = dest;
+//                        }
+//                    }
+//
+//                    // The sources are no longer in use.
+//                    openRegions.removeAll(sources);
+//
+//                    // Remove any connectors that aren't needed anymore.
+//                    connectors.removeWhere((pos), {
+//                        // Don't allow connectors right next to each other.
+//                        //if (connector - pos < 2) return true;
+//
+//                        // If the connector no long spans different regions, we don't need it.
+//                        //var regions = connectorRegions[pos].map((region) => merged[region])
+//                        //    .toSet();
+//
+//                        //if (regions.length > 1) return false;
+//
+//                        // This connecter isn't needed, but connect it occasionally so that the
+//                        // dungeon isn't singly-connected.
+//                        //if (rng.oneIn(extraConnectorChance)) _addJunction(pos);
+//
+//                        //return true;
+//                    });
+//                }
+            };
             
             self.getMap = function (specs) {
                 self.fillGrid(specs);
@@ -294,6 +321,7 @@
                 
                 self.generateCorridors(specs);
                 
+                self.createDoorConnections(specs);
                 //self.grid['G50_27'].background = 'blue';
                 
                 return {
