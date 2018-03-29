@@ -121,6 +121,12 @@
                 self.grid['G'+(coord.x)+'_'+(coord.y)].type = type;
             };
             
+            self.uncarve = function(coord){
+                self.grid['G'+(coord.x)+'_'+(coord.y)].background = 'black';
+                self.grid['G'+(coord.x)+'_'+(coord.y)].filled = false;
+                self.grid['G'+(coord.x)+'_'+(coord.y)].type = null;
+            };
+            
             self.canThisCellBeNextCandidateForCorridor = function(cell, direction, specs){
                 //candidate cell can not be room wall, border, can be another corridor tho 
                 var cellCopy = angular.copy(cell);
@@ -287,24 +293,58 @@
                         }
 
                     });
-                    //console.log(finalDoorsArray);
+                    
                 });
                 
+            };
+            
+            self.isCellAnCorridorOrArchway = function(cell, direction, specs){
+                var cellCopy = angular.copy(cell);
+                var key = Object.keys(direction)[0];
+                cellCopy[key] = cellCopy[key] + direction[key];
+                
+                //if out of bounds ignore and return false
+                return  (!(cellCopy.x < 0 || cellCopy.y < 0 || cellCopy.x > specs.w || cellCopy.y > specs.h)) && 
+                //is corridor or is archway
+                        (!(self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type === null) );
+            };
+            
+            self.removeCorridorsDeadEnds = function (specs) {
+                var Directions = [{x:-1}, {x:1}, {y:-1}, {y:1}];
+                var done = false;
 
-                
-                console.log(self.rooms);
-                
+                while (!done) {
+                    done = true;
+                    
+                    _.forEach(self.grid, function (cell, key) {
+                        
+                        if (cell.type === 'corridor'){
+                            // If it only has one exit, it's a dead end.
+                            var exits = 0;
+                            
+                            _.forEach(Directions, function (dir, key) {
+                                if (self.isCellAnCorridorOrArchway(cell, dir, specs)){
+                                    exits++;
+                                } 
+                            });
+                            
+                            if (exits === 1){ //it's a dead end
+                                done = false;
+                                self.uncarve({x: cell.x, y: cell.y});
+                            }
+ 
+                        }
+                    });
+                }
             };
             
             self.getMap = function (specs) {
                 self.fillGrid(specs);
                 self.generateRooms(specs);
                 self.carveRoomSpace();
-                
                 self.generateCorridors(specs);
-                
                 self.createDoorConnections(specs);
-                //self.grid['G50_27'].background = 'blue';
+                self.removeCorridorsDeadEnds(specs);
                 
                 return {
                     grid: self.grid,
