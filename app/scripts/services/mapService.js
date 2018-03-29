@@ -41,7 +41,6 @@
             
             self.generateRooms = function (specs) {
                 for (var i = 0; i < self.tries; i++) {
-                    //console.log('starting for '+i);
                     var size = _.random(1, 3 + self.roomExtraSize) * 2 + 1;
                     var rectangularity = _.random(0, 1 + _.toInteger(size / 2)) * 2;
                     var width = size;
@@ -93,10 +92,8 @@
             
             self.carveRoomSpace = function(){
                 _.forEach(self.rooms, function (room, key) {
-                    //var color = _.sample(['blue', 'green', 'yellow', 'teal']);
                     for (var j = 0; j < room.width; j++) {
                         for (var k = 0; k < room.height; k++) {
-                            //console.log('seting up '+'G'+(room.x+j)+'_'+(room.y+k));
                             self.carve({x:(room.x+j), y:(room.y+k)}, '#a5c7c7', ('room_'+key) );
                         }
                     }    
@@ -106,7 +103,6 @@
             self.generateCorridors = function (specs) {
                 for (var y = 1; y < specs.h; y += 2) {
                     for (var x = 1; x < specs.w; x += 2) {
-                        //console.log(self.grid['G'+(x)+'_'+(y)].filled);
                         //if not filled generate corridor
                         if (!self.grid['G'+(x)+'_'+(y)].filled){
                             self.generateCorridor({x:x,y:y}, specs);
@@ -141,7 +137,6 @@
             };
 
             self.generateCorridor = function (startingPoint, specs) {
-                //console.log(startingPoint);
                 var Directions = [{x:-2}, {x:2}, {y:-2}, {y:2}];
                 var corridor = [];
                 var lastDir;
@@ -161,8 +156,6 @@
                             extensionCandidatesCells.push(dir);
                         } 
                     });
-                    
-                    //console.log(extensionCandidatesCells);
                     
                     if (extensionCandidatesCells.length > 0) {
                         // Based on how "windy" passages are, try to prefer carving in the same direction.
