@@ -15,8 +15,8 @@
             
             $scope.mapBoxStyle = function(){
                 return{
-                    width: ($scope.specs.w * $scope.specs.size)+'px',
-                    height: ($scope.specs.h * $scope.specs.size)+'px'
+                    width: ($scope.specs.w * $scope.specs.size)+($scope.specs.size+2)+'px',
+                    height: ($scope.specs.h * $scope.specs.size)+($scope.specs.size+2)+'px'
                 };
             };
             
