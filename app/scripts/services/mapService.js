@@ -311,7 +311,7 @@
                     
                     _.forEach(self.grid, function (cell, key) {
                         
-                        if (cell.type === 'corridor'){
+                        if (cell.type === 'corridor' || cell.type === 'door'){
                             // If it only has one exit, it's a dead end.
                             var exits = 0;
                             
@@ -338,6 +338,8 @@
                 self.generateCorridors(specs);
                 self.createDoorConnections(specs);
                 self.removeCorridorsDeadEnds(specs);
+                
+                console.log(self.rooms);
                 
                 return {
                     grid: self.grid,
