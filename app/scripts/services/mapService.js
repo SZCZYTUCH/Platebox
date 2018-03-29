@@ -272,7 +272,12 @@
                             (_.some(finalDoorsArray,   { x: drawDoor.x-1,    y: drawDoor.y     })) ||
                             (_.some(finalDoorsArray,   { x: drawDoor.x,      y: drawDoor.y-1   }))
                         )
-                        {   drawDoor = _.sample(room.doors);     }
+                        {   
+                            //TODO
+                            //favour room to room conection
+                            //remove already selected doors from the pool
+                            drawDoor = _.sample(room.doors);     
+                        }
                         
                         finalDoorsArray.push(drawDoor);
                         
