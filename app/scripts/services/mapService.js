@@ -230,7 +230,7 @@
                                     var key = Object.keys(dir)[0];
                                     var candidate = {x:x, y:y};
                                     candidate[key] = candidate[key] + (dir[key] / 2);
-                                    self.connectorRegions.push({cell:candidate, connectorType: 'c-r', closed: true}); 
+                                    self.connectorRegions.push({x: candidate.x, y: candidate.y, connectorType: 'c-r', closed: true}); 
                                 } 
                             });
                         };
@@ -238,7 +238,7 @@
                         //if cell is a null type check for possible door connection between rooms
                         if (self.grid['G'+(x)+'_'+(y)].type === null){
                             if (self.canThisNullCellBeNextCandidateForDoorConnector({x:x, y:y})){
-                                self.connectorRegions.push({cell:{x:x, y:y}, connectorType: 'r-r', closed: true}); 
+                                self.connectorRegions.push({x:x, y:y, connectorType: 'r-r', closed: true}); 
                             }
                         }
                     }
@@ -248,7 +248,7 @@
                 _.forEach(self.rooms, function (room, k) {
                     for (var j = -1; j < room.width+1; j++) {
                         for (var k = -1; k < room.height+1; k++) {                            
-                            var door = _.find(self.connectorRegions, function(connector) { return (connector.cell.x === (room.x+j) && connector.cell.y === (room.y+k)); });
+                            var door = _.find(self.connectorRegions, function(connector) { return (connector.x === (room.x+j) && connector.y === (room.y+k)); });
                             if (door !== undefined){  room.doors.push(door);  }
                         }
                     }
@@ -271,9 +271,13 @@
 //                    while (finalDoorsArray.length < randNumDoors){
 //                        var drawDoor = null;
 //                        //TODO optymalize
-//                        while (drawDoor === null || drawDoor.closed){
+//                        while (drawDoor === null || !drawDoor.closed){
 //                            drawDoor = _.sample(room.doors);
 //                        }
+//                        
+//                        //check for door next to door correlation
+//                        _.every(finalDoorsArray, { 'user': 'barney', 'active': false });
+//                        
 //                        
 //                        
 //                        
@@ -285,7 +289,7 @@
                 
                 _.forEach(self.connectorRegions, function (connector, k) {
                     //console.log(connector);
-                    var cellCopy = connector.cell;
+                    var cellCopy = connector;
                     if (connector.connectorType === 'c-r'){  
                         self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'orange';
                     } else if(connector.connectorType === 'r-r'){
