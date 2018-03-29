@@ -7,10 +7,17 @@
             var self = this; 
             
             $scope.specs = {
-                w: 60,
-                h: 60,
-                size: 10
+                w: 30,
+                h: 30,
+                size: 9
 
+            };
+            
+            $scope.mapBoxStyle = function(){
+                return{
+                    width: ($scope.specs.w * $scope.specs.size)+'px',
+                    height: ($scope.specs.h * $scope.specs.size)+'px'
+                };
             };
             
             $scope.plateStyle = function (square) {
