@@ -66,18 +66,18 @@
                     });
                     
                     //checks if curent_room overlaps the bottom edge
-                    if (self.isOverlaping(curent_room, {x: 0, y: specs.w + 1, width: specs.w + 1, height: 1})) {
+                    if (self.isOverlaping(curent_room, {x: 0, y: specs.h + 1, width: specs.w + 1, height: 1})) {
                         not_overlaping = false;
                     }
                     //checks if curent_room overlaps the right edge
-                    if (self.isOverlaping(curent_room, {x: specs.h + 1, y: 0, width: 1, height: specs.h + 1})) {
+                    if (self.isOverlaping(curent_room, {x: specs.w + 1, y: 0, width: 1, height: specs.h + 1})) {
                         not_overlaping = false;
                     }
 
                     if (not_overlaping) {
                         self.rooms.push(curent_room);
                     };
-
+                    
                 }
             };
             
