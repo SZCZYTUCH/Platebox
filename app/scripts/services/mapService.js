@@ -321,7 +321,7 @@
                                 } 
                             });
                             
-                            if (exits === 1){ //it's a dead end
+                            if (exits <= 1){ //it's a dead end
                                 done = false;
                                 self.uncarve({x: cell.x, y: cell.y});
                             }
