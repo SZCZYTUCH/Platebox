@@ -252,11 +252,13 @@
                 //randomly select doors to carve, remove the rest
                 _.forEach(self.rooms, function (room, k) {
                     var roomSize  = (room.width*room.height);
-                    var maxDoors = Math.floor(Math.pow(roomSize*0.79370005232323, 0.44727752133702440338));
+                    var maxDoorsPower = Math.floor(Math.pow(roomSize*0.79370005232323, 0.44727752133702440338));
+                    var maxDoorsPossible = room.doors.length;
+                    var maxDoors = (maxDoorsPower >= maxDoorsPossible)? maxDoorsPower : maxDoorsPossible;
                     var randNumDoors = _.random(1, maxDoors);
                     var finalDoorsArray = [];
 
-                    while (finalDoorsArray.length < randNumDoors){
+                    while (finalDoorsArray.length < randNumDoors && maxDoorsPossible > 0){
                         var drawDoor = null;
                         //TODO optymalize
                         
