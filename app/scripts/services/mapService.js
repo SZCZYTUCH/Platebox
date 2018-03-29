@@ -254,7 +254,7 @@
                     var roomSize  = (room.width*room.height);
                     var maxDoorsPower = Math.floor(Math.pow(roomSize*0.79370005232323, 0.44727752133702440338));
                     var maxDoorsPossible = room.doors.length;
-                    var maxDoors = (maxDoorsPower >= maxDoorsPossible)? maxDoorsPower : maxDoorsPossible;
+                    var maxDoors = (maxDoorsPower <= maxDoorsPossible)? maxDoorsPower : maxDoorsPossible;
                     var randNumDoors = _.random(1, maxDoors);
                     var finalDoorsArray = [];
 
@@ -340,8 +340,6 @@
                 self.generateCorridors(specs);
                 self.createDoorConnections(specs);
                 self.removeCorridorsDeadEnds(specs);
-                
-                console.log(self.rooms);
                 
                 return {
                     grid: self.grid,
