@@ -203,10 +203,6 @@
                         ((self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].type+'').substring(0, 4) === 'room');
             };
             
-            self.carveDoor = function(door){
-                
-            };
-            
             self.canThisNullCellBeNextCandidateForDoorConnector = function(nullCell){
                 return (
                 (   ( (self.grid['G'+(nullCell.x+1)+'_'+(nullCell.y)].type+'').substring(0, 4) === 'room' ) &&
@@ -258,123 +254,46 @@
                 _.forEach(self.rooms, function (room, k) {
                     var roomSize  = (room.width*room.height);
                     var maxDoors = Math.floor(Math.pow(roomSize*0.79370005232323, 0.44727752133702440338));
-                    var randNumDoors = _.random(maxDoors);
+                    var randNumDoors = _.random(1, maxDoors);
                     var finalDoorsArray = [];
-                    
-                    
-                    //finalDoorsArray.push(_.sample(room.doors));
-                    //finalDoorsArray[0].closed = false;
-                    
-                    console.log('Room size: '+roomSize);
-                    console.log('Maximum doors for the room: '+maxDoors);
 
-//                    while (finalDoorsArray.length < randNumDoors){
-//                        var drawDoor = null;
-//                        //TODO optymalize
-//                        while (drawDoor === null || !drawDoor.closed){
-//                            drawDoor = _.sample(room.doors);
-//                        }
-//                        
-//                        //check for door next to door correlation
-//                        _.every(finalDoorsArray, { 'user': 'barney', 'active': false });
-//                        
-//                        
-//                        
-//                        
-//                    }    
-                });
-                
-                
-                
-                
-                _.forEach(self.connectorRegions, function (connector, k) {
-                    //console.log(connector);
-                    var cellCopy = connector;
-                    if (connector.connectorType === 'c-r'){  
-                        self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'orange';
-                    } else if(connector.connectorType === 'r-r'){
-                        self.grid['G'+(cellCopy.x)+'_'+(cellCopy.y)].background = 'pink';
+                    while (finalDoorsArray.length < randNumDoors){
+                        var drawDoor = null;
+                        //TODO optymalize
+                        
+                        while 
+                        (
+                            drawDoor === null || 
+                            !drawDoor.closed ||
+                            //check for door next to door correlation
+                            (_.some(finalDoorsArray,   { x: drawDoor.x+1,    y: drawDoor.y     })) ||
+                            (_.some(finalDoorsArray,   { x: drawDoor.x,      y: drawDoor.y+1   })) ||
+                            (_.some(finalDoorsArray,   { x: drawDoor.x-1,    y: drawDoor.y     })) ||
+                            (_.some(finalDoorsArray,   { x: drawDoor.x,      y: drawDoor.y-1   }))
+                        )
+                        {   drawDoor = _.sample(room.doors);     }
+                        
+                        finalDoorsArray.push(drawDoor);
+                        
                     }
+                    room.doors = finalDoorsArray;
                     
-                    
-                    
+                    //carve connectors
+                    _.forEach(finalDoorsArray, function (connector, k) {
+                        if (connector.connectorType === 'c-r') {
+                            self.carve({x:(connector.x), y:(connector.y)}, 'orange', 'door' );
+                        } else if (connector.connectorType === 'r-r') {
+                            self.carve({x:(connector.x), y:(connector.y)}, 'pink', 'archway' );
+                        }
+
+                    });
+                    //console.log(finalDoorsArray);
                 });
+                
+
                 
                 console.log(self.rooms);
                 
-//                for (var pos in bounds.inflate(-1)) {
-//                    // Can't already be part of a region.
-//                    if (getTile(pos) != Tiles.wall)
-//                        continue;
-//
-//                    //var regions = new Set<int>();
-//                    for (var dir in Direction.CARDINAL) {
-//                        var region = _regions[pos + dir];
-//                        if (region != null)
-//                            regions.add(region);
-//                    }
-//
-//                    if (regions.length < 2)
-//                        continue;
-//
-//                    connectorRegions[pos] = regions;
-//                }
-//
-//                var connectors = connectorRegions.keys.toList();
-//
-//                // Keep track of which regions have been merged. This maps an original
-//                // region index to the one it has been merged to.
-//                var merged = {};
-//                //var openRegions = new Set<int>();
-//                for (var i = 0; i <= _currentRegion; i++) {
-//                    merged[i] = i;
-//                    openRegions.add(i);
-//                }
-//
-//                // Keep connecting regions until we're down to one.
-//                while (openRegions.length > 1) {
-//                    var connector = rng.item(connectors);
-//
-//                    // Carve the connection.
-//                    _addJunction(connector);
-//
-//                    // Merge the connected regions. We'll pick one region (arbitrarily) and
-//                    // map all of the other regions to its index.
-//                    var regions = connectorRegions[connector]
-//                            .map((region) => merged[region]);
-//                    var dest = regions.first;
-//                    var sources = regions.skip(1).toList();
-//
-//                    // Merge all of the affected regions. We have to look at *all* of the
-//                    // regions because other regions may have previously been merged with
-//                    // some of the ones we're merging now.
-//                    for (var i = 0; i <= _currentRegion; i++) {
-//                        if (sources.contains(merged[i])) {
-//                            merged[i] = dest;
-//                        }
-//                    }
-//
-//                    // The sources are no longer in use.
-//                    openRegions.removeAll(sources);
-//
-//                    // Remove any connectors that aren't needed anymore.
-//                    connectors.removeWhere((pos), {
-//                        // Don't allow connectors right next to each other.
-//                        //if (connector - pos < 2) return true;
-//
-//                        // If the connector no long spans different regions, we don't need it.
-//                        //var regions = connectorRegions[pos].map((region) => merged[region])
-//                        //    .toSet();
-//
-//                        //if (regions.length > 1) return false;
-//
-//                        // This connecter isn't needed, but connect it occasionally so that the
-//                        // dungeon isn't singly-connected.
-//                        //if (rng.oneIn(extraConnectorChance)) _addJunction(pos);
-//
-//                        //return true;
-//                    });
-//                }
             };
             
             self.getMap = function (specs) {
