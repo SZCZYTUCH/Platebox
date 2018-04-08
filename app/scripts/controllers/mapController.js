@@ -32,10 +32,13 @@
 
             };
             
-            $scope.map = {};
+            //$scope.map = {};
             
-            $scope.map = mapService.getMap($scope.specs);
+            $rootScope.map = mapService.getMap($scope.specs);
             
+            
+            
+
             
             console.log($scope.map);
 

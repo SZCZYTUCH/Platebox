@@ -9,7 +9,15 @@
                 $rootScope.loading = false;
             
                 $location.path("/mainGamePanel");
-            
+                
+                $rootScope.lastPlayerMove = null;
+                $rootScope.$watch('lastPlayerMove', function (newValue, oldValue) {
+                    if ($rootScope.lastPlayerMove !== null) {
+                        console.log(newValue);
+                        $rootScope.lastPlayerMove = null;
+                    }
+
+                }, true);
             
                     
                     

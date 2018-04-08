@@ -322,6 +322,9 @@
 
                     self.moveAndRandomizeTaken($scope.patch);
                     $scope.$apply();
+                    
+                    //TODO
+                    $rootScope.lastPlayerMove = {invar: (_.last($scope.patch)).invar, lastDirection: (_.last($scope.patch)).lastDirection, power: $scope.patch.length};
 
                     $timeout(function () {
 
