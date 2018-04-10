@@ -2,21 +2,26 @@
     'use strict';
 
     angular.module('PLATEBOX')
-        .controller('mapController', ['$scope', '$rootScope', '$element', '$compile', '$timeout', 'mapService', function ($scope, $rootScope, $element, $compile, $timeout, mapService) {
-
-            var self = this; 
+        .controller('mapController', ['$scope', '$rootScope', '$element', '$compile', '$timeout', 'mapService', 'playerService',
+                             function ($scope,   $rootScope,   $element,   $compile,   $timeout,   mapService,   playerService) {
             
             $scope.specs = {
                 w: 30,
                 h: 30,
                 size: 9
-
             };
             
-            $scope.mapBoxStyle = function(){
+            $scope.map = {};
+            
+            $scope.player = {
+                x: 0,
+                y: 0
+            };
+            
+            $scope.overflowBoxStyle = function(){
                 return{
-                    width: ($scope.specs.w * $scope.specs.size)+($scope.specs.size+2)+'px',
-                    height: ($scope.specs.h * $scope.specs.size)+($scope.specs.size+2)+'px'
+                    width: '280px',
+                    height: '280px',
                 };
             };
             
@@ -32,15 +37,36 @@
 
             };
             
-            //$scope.map = {};
+            $scope.playerStyle = function(){
+                return {
+                    transform: 'translate3d(' + ($scope.player.y * $scope.specs.size) + 'px,' + ($scope.player.x * $scope.specs.size) + 'px,0)',
+                    width: ($scope.specs.size-1) + 'px',
+                    height: ($scope.specs.size-1) + 'px',
+                };
+            };
             
-            $rootScope.map = mapService.getMap($scope.specs);
+            $scope.map = mapService.getMap($scope.specs);
+            
+            
+            
+            $scope.player = {
+                x: $scope.map.rooms[0].x,
+                y: $scope.map.rooms[0].y
+            };
             
             
             
 
             
             console.log($scope.map);
+            
+            $rootScope.$watch('lastPlayerMove', function (newValue, oldValue) {
+                if ($rootScope.lastPlayerMove !== null) {
+                    console.log(newValue);
+                    $rootScope.lastPlayerMove = null;
+                }
+
+            }, true);
 
         }]);
 

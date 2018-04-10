@@ -169,6 +169,11 @@ html, body {
         transform: translateY(40px);
 }
 
+.plate-overflow-box{
+    overflow: auto;
+    position: relative;     
+}
+
 .flex-center{
     display: flex;
     align-items: center;

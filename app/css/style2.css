@@ -4,3 +4,19 @@
     font-size: 10px;
 }
 
+.player-box{
+    position: absolute;
+    border: 1px solid black;
+    font-size: 10px;
+    z-index: 999;
+    
+    background-image: url(../assets/images/player/player.png);
+    background-size: 100% 100%;
+    background-position: center;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    height: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
