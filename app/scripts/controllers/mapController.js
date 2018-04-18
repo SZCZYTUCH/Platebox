@@ -63,6 +63,13 @@
             $rootScope.$watch('lastPlayerMove', function (newValue, oldValue) {
                 if ($rootScope.lastPlayerMove !== null) {
                     console.log(newValue);
+                    
+                    playerService.movePlayer({
+                        direction: newValue.lastDirection,
+                        power: 1,
+                        playerObject: $scope.player
+                    });
+                    
                     $rootScope.lastPlayerMove = null;
                 }
 
