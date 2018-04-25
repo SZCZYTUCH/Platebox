@@ -11,20 +11,52 @@
             
             self.movePlayer = function(move){
                 let redirectDirection = '';
-                switch (move.direction){
-                    case 'nw':  { redirectDirection = 'se'; break;}
-                    case 'n':   { redirectDirection = 's'; break;}
-                    case 'ne':  { redirectDirection = 'sw'; break;}
-                    case 'e':   { redirectDirection = 'w'; break;}
-                    case 'se':  { redirectDirection = 'nw'; break;}
-                    case 's':   { redirectDirection = 'n'; break;}
-                    case 'sw':  { redirectDirection = 'ne'; break;}
-                    case 'w':   { redirectDirection = 'e'; break;}                         
-                };
+                    switch (move.direction) {
+                        case 'nw':{
+                            redirectDirection = 'se';
+                            move.playerObject.x = move.playerObject.x+1; move.playerObject.y = move.playerObject.y+1;
+                            break;
+                        }
+                        case 'n':{
+                            redirectDirection = 's';
+                            move.playerObject.x = move.playerObject.x+1;
+                            break;
+                        }
+                        case 'ne':{
+                            redirectDirection = 'sw';
+                            move.playerObject.x = move.playerObject.x+1; move.playerObject.y = move.playerObject.y-1;
+                            break;
+                        }
+                        case 'e':{
+                            redirectDirection = 'w';
+                            move.playerObject.y = move.playerObject.y-1;
+                            break;
+                        }
+                        case 'se':{
+                            redirectDirection = 'nw';
+                            move.playerObject.x = move.playerObject.x-1; move.playerObject.y = move.playerObject.y-1;
+                            break;
+                        }
+                        case 's':{
+                            redirectDirection = 'n';
+                            move.playerObject.x = move.playerObject.x-1;
+                            break;
+                        }
+                        case 'sw':{
+                            redirectDirection = 'ne';
+                            move.playerObject.x = move.playerObject.x-1; move.playerObject.y = move.playerObject.y+1;
+                            break;
+                        }
+                        case 'w':{
+                            redirectDirection = 'e';
+                            move.playerObject.y = move.playerObject.y+1;
+                            break;
+                        }
+                    };
                 
-                
-                //move.playerObject.x = move.playerObject.x+1;
-                
+            };
+            
+            self.tryAvailability = function(pos){
                 
             };
 

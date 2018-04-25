@@ -435,7 +435,7 @@
 
                 self.onEnd = function (e) {
                     if ($scope.currentInvar !== null) {
-                        if($scope.patch.length >= 3 ){
+                        if($scope.patch.length >= 2 ){
                             $scope.mainBlock = true;
                             self.calculateProperLine(true);
                         }else{
