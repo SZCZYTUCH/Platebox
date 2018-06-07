@@ -25,6 +25,26 @@
                 };
             };
             
+            $scope.canvasSize = function(){
+                return{
+                    width: '280px',
+                    height: '280px',
+                };
+            };
+            
+            
+            $scope.drawShape = function(){
+                console.log('drawing shape');
+                
+                //var stage = new createjs.Stage('demoCanvas');
+                var shape = new createjs.Shape();
+                shape.graphics.beginFill('red').drawRect(0, 0, 120, 120);
+                //stage.addChild(shape);
+                //stage.update();
+                $rootScope.mapCanvas.addChild(shape);
+                $rootScope.mapCanvas.update();
+            };
+            
             $scope.plateStyle = function (square) {
 
                 return {

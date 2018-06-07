@@ -8,7 +8,8 @@
         
                 $rootScope.loading = false;
                 $rootScope.lastPlayerMove = null;
-            
+                $rootScope.mapCanvas = null;
+                
                 $location.path("/mainGamePanel");
                 
                 
