@@ -70,7 +70,8 @@
                     playerService.movePlayer({
                         direction: newValue.lastDirection,
                         power: 1,
-                        playerObject: $scope.player
+                        playerObject: $scope.player,
+                        mapObject: $scope.map
                     });
                     
                     $rootScope.lastPlayerMove = null;
