@@ -2,21 +2,17 @@
     'use strict';
 
     angular.module('PLATEBOX')
-        .controller('mapController', ['$scope', '$rootScope', '$element', '$compile', '$timeout', 'mapService', 'playerService',
-                             function ($scope,   $rootScope,   $element,   $compile,   $timeout,   mapService,   playerService) {
+        .controller('mapController', ['$scope', '$rootScope', '$element', '$compile', '$timeout', 'mapService', 'playerService', 'drawService',
+                             function ($scope,   $rootScope,   $element,   $compile,   $timeout,   mapService,   playerService,   drawService) {
             
-            $scope.specs = {
-                w: 30,
-                h: 30,
-                size: 9
-            };
-            
-            $scope.map = {};
-            
-            $scope.player = {
-                x: 0,
-                y: 0
-            };
+            $scope.specs    = { w: 30,  h: 30,  size: 9 };
+            $scope.map      = {};
+            $scope.player   = { x: 0,   y: 0 };
+            $scope.mapCanvas = new createjs.Stage("mapCanvas");
+            $scope.map = mapService.getMap($scope.specs);
+            $scope.map.create_js_shape = drawService.drawMap($scope.map, $scope.specs);
+            $scope.mapCanvas.addChild($scope.map.create_js_shape);
+            $scope.mapCanvas.update();
             
             $scope.overflowBoxStyle = function(){
                 return{
@@ -32,19 +28,7 @@
                 };
             };
             
-            
-            $scope.drawShape = function(){
-                console.log('drawing shape');
-                
-                //var stage = new createjs.Stage('demoCanvas');
-                var shape = new createjs.Shape();
-                shape.graphics.beginFill('red').drawRect(0, 0, 120, 120);
-                //stage.addChild(shape);
-                //stage.update();
-                $rootScope.mapCanvas.addChild(shape);
-                $rootScope.mapCanvas.update();
-            };
-            
+                      
             $scope.plateStyle = function (square) {
 
                 return {
@@ -65,10 +49,9 @@
                 };
             };
             
-            $scope.map = mapService.getMap($scope.specs);
             
             
-            
+                       
             $scope.player = {
                 x: $scope.map.rooms[0].x,
                 y: $scope.map.rooms[0].y
@@ -94,7 +77,7 @@
                 }
 
             }, true);
-
+            
         }]);
 
 })();

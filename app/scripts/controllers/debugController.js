@@ -39,9 +39,6 @@
 //                <div class="plate-info" ng-click="begin()" ng-bind="currentInvar" ></div>\
             };
             
-            $scope.initMapCanvas = function(){
-                $rootScope.mapCanvas = new createjs.Stage("demoCanvas");
-            };
             
             //$scope.generateMap();
             //$scope.generateGrid();
