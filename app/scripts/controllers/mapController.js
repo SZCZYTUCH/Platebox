@@ -50,17 +50,18 @@
             };
             
             
-            
-                       
-            $scope.player = {
-                x: $scope.map.rooms[0].x,
-                y: $scope.map.rooms[0].y
+            $scope.testClick = function(){
+                console.log('testClick');
+                
+                $scope.mapCanvas.scaleX = 2;
+                $scope.mapCanvas.scaleY = 2;
+                $scope.mapCanvas.update();
             };
             
             
-            
+            $scope.player.x = $scope.map.rooms[0].x;
+            $scope.player.y = $scope.map.rooms[0].y;
 
-            
             console.log($scope.map);
             
             $rootScope.$watch('lastPlayerMove', function (newValue, oldValue) {
