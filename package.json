@@ -16,6 +16,7 @@
     "angular-hammer": "^2.2.0",
     "angular-route": "1.5.8",
     "easeljs": "https://github.com/CreateJS/EaselJS",
+    "hammerjs": "^2.0.8",
     "lodash": "^4.17.10"
   },
   "optionalDependencies": {
