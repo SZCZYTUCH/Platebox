@@ -9,10 +9,21 @@
             $scope.map      = {};
             $scope.player   = { x: 0,   y: 0 };
             $scope.mapCanvas = new createjs.Stage("mapCanvas");
+            //var container = new createjs.Container();
+            createjs.Touch.enable($scope.mapCanvas);
             $scope.map = mapService.getMap($scope.specs);
             $scope.map.create_js_shape = drawService.drawMap($scope.map, $scope.specs);
             $scope.mapCanvas.addChild($scope.map.create_js_shape);
             $scope.mapCanvas.update();
+            
+            
+//            $scope.map.create_js_shape.on("pressmove", function(evt) {
+//                console.log(evt);
+//                evt.target.x = evt.stageX;
+//                evt.target.y = evt.stageY;
+//            });
+//            $scope.map.create_js_shape.on("pressup", function(evt) { console.log("up"); })
+            
             
             $scope.overflowBoxStyle = function(){
                 return{
