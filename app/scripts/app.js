@@ -3,6 +3,7 @@
 
     angular.module('PLATEBOX', [
         'ngRoute',
+        'hmTouchEvents'
         //'digestHud'
     ])
     
