@@ -59,17 +59,7 @@
                     height: ($scope.specs.size-1) + 'px',
                 };
             };
-            
-            
-            $scope.testClick = function(){
-                console.log('testClick');
-                
-                $scope.mapCanvas.scaleX = 2;
-                $scope.mapCanvas.scaleY = 2;
-                $scope.mapCanvas.update();
-            };
-            
-            
+             
             $scope.player.x = $scope.map.rooms[0].x;
             $scope.player.y = $scope.map.rooms[0].y;
 
@@ -90,6 +80,58 @@
                 }
 
             }, true);
+            
+            
+            $scope.mapStartX = null;
+            $scope.mapStartY = null;
+            
+            
+            $scope.panstart = function(event){
+                //console.log(event);
+                $scope.mapStartX = $scope.mapCanvas.x;
+                $scope.mapStartY = $scope.mapCanvas.y;
+
+            };
+            
+            $scope.testClick = function (event){
+                console.log(event);
+                //console.log(event.deltaX, event.deltaX);
+                //console.log(event.center.x, event.center.y);
+                //console.log('testClick');
+                //console.log($scope.mapCanvas.x, $scope.mapCanvas.y);
+                
+                $scope.mapCanvas.x = $scope.mapStartX + event.deltaX;//(event.center.x - 40); 
+                $scope.mapCanvas.y = $scope.mapStartY + event.deltaY;//(event.center.y - 20);
+                
+                //$scope.mapCanvas.scaleX = 2;
+                //$scope.mapCanvas.scaleY = 2;
+                $scope.mapCanvas.update();
+            };
+            
+            $scope.panend = function(event){
+                //console.log(event);
+                $scope.mapStartX = null;
+                $scope.mapStartY = null;
+            };
+            
+            
+            $scope.dblTap = function(){
+                console.log('SDSDSD');
+                $scope.mapCanvas.scaleX = 1;
+                $scope.mapCanvas.scaleY = 1;
+                $scope.mapCanvas.x = 0;
+                $scope.mapCanvas.y = 0;
+                $scope.mapCanvas.update();
+            };
+            
+            $scope.pinchmove = function(event){
+                console.log(event);
+                console.log('pinchin '+ event.distance);
+//                var delta = 0.01;
+//                $scope.mapCanvas.scaleX = $scope.mapCanvas.scaleX - delta;
+//                $scope.mapCanvas.scaleY = $scope.mapCanvas.scaleY - delta;
+//                $scope.mapCanvas.update();
+            };
             
         }]);
 
