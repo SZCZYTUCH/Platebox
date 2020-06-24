@@ -11,7 +11,7 @@
   "author": "psz",
   "contributors": [],
   "dependencies": {
-    "angular": "1.6.1",
+    "angular": "1.8.0",
     "angular-deferred-bootstrap": "^0.1.9",
     "angular-hammer": "^2.2.0",
     "angular-route": "1.5.8",
